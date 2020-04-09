@@ -24,6 +24,12 @@ func (list *SkipList) Front() *Element {
 func (list *SkipList) Set(key float64, value interface{}) *Element {
 	list.mutex.Lock()
 	defer list.mutex.Unlock()
+	return list.set(key,value)
+}
+
+func (list *SkipList) set(key float64, value interface{}) *Element {
+	list.mutex.Lock()
+	defer list.mutex.Unlock()
 
 	var element *Element
 	prevs := list.getPrevElementNodes(key)
@@ -81,6 +87,20 @@ func (list *SkipList) Get(key float64) *Element {
 func (list *SkipList) Remove(key float64) *Element {
 	list.mutex.Lock()
 	defer list.mutex.Unlock()
+	return list.remove(key) 
+}
+
+// Move change the values'key
+// Returns the element pointer if found, nil if not found.
+// Locking is optimistic and happens only after searching with a fast check on adjacent nodes after locking.
+func (list *SkipList) Move(origin float64,key float64) *Element {
+	list.mutex.Lock()
+	defer list.mutex.Unlock()
+	elm := list.remove(origin) 
+	return list.set(key,elm.value)
+}
+
+func (list *SkipList) remove(key float64) *Element {
 	prevs := list.getPrevElementNodes(key)
 
 	// found the element, remove it
