@@ -28,9 +28,6 @@ func (list *SkipList) Set(key float64, value interface{}) *Element {
 }
 
 func (list *SkipList) set(key float64, value interface{}) *Element {
-	list.mutex.Lock()
-	defer list.mutex.Unlock()
-
 	var element *Element
 	prevs := list.getPrevElementNodes(key)
 
